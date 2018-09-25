@@ -1,0 +1,16 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Folder Include="Git\PullRequest\" />
+    <Folder Include="Git\Repo\" />
+    <Folder Include="WorkItem\" />
+    <Folder Include="Pipelines\Builds\" />
+    <Folder Include="Pipelines\Releases\" />
+  </ItemGroup>
+
+</Project>
