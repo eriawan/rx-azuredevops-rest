@@ -63,6 +63,17 @@ namespace RXCO.AzureDevOps.REST.Base
             return result;
         }
 
+        public override bool Equals(object obj)
+        {
+            var semverIsEqual = false;
+            var checkSemVerType = obj as APISemanticVersionWrapper;
+            if (checkSemVerType != null)
+            {
+                semverIsEqual = (this.CompareTo(checkSemVerType) == 0);
+            }
+            return semverIsEqual;
+        }
+
         #region Implicit IComparer<T> and IComparable<T> for convenience
 
         public int CompareTo(APISemanticVersionWrapper otherVersion)
@@ -107,7 +118,7 @@ namespace RXCO.AzureDevOps.REST.Base
                 {
                     // check for greater than
                     bool isGreaterThan = false;
-                    isGreaterThan = (x.VersionMajor > y.VersionMajor) || ((x.VersionMajor == y.VersionMajor) && (x.VersionMinor < y.VersionMinor));
+                    isGreaterThan = (x.VersionMajor > y.VersionMajor) || ((x.VersionMajor == y.VersionMajor) && (x.VersionMinor > y.VersionMinor));
                     isGreaterThan = isGreaterThan || ((x.VersionMajor == y.VersionMajor) && (x.VersionMinor == y.VersionMinor) && (x.VersionPatch > y.VersionPatch));
                     if (isGreaterThan)
                     {
