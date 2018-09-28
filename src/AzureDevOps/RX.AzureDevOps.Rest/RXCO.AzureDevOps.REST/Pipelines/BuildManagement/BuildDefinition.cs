@@ -4,7 +4,7 @@ using System.Text;
 
 namespace RXCO.AzureDevOps.REST.Pipelines.Builds
 {
-    class BuildDefinition
+    public class BuildDefinition
     {
     }
 }
