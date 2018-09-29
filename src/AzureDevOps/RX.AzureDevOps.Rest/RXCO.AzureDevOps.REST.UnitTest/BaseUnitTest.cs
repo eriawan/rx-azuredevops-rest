@@ -15,7 +15,7 @@ namespace RXCO.AzureDevOps.REST.UnitTest
             // check for less than and greater than
             versionA = new APISemanticVersionWrapper(1, 0);
             versionB = new APISemanticVersionWrapper(1, 1);
-            Assert.AreNotEqual<APISemanticVersionWrapper>(versionA, versionB);
+            Assert.AreEqual<APISemanticVersionWrapper>(versionA, versionB);
             Assert.IsTrue(versionA < versionB);
             Assert.IsTrue(versionB > versionA);
         }
