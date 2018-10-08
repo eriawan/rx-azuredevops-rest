@@ -49,6 +49,20 @@ namespace RXCO.AzureDevOps.REST.Base
             result = APISemanticVersionWrapper.Compare(versionA, versionB) < 0;
             return result;
         }
+
+        public static bool operator ==(APISemanticVersionWrapper versionA, APISemanticVersionWrapper versionB)
+        {
+            var result = false;
+            result = APISemanticVersionWrapper.Compare(versionA, versionB) == 0;
+            return result;
+        }
+
+        public static bool operator !=(APISemanticVersionWrapper versionA, APISemanticVersionWrapper versionB)
+        {
+            var result = false;
+            result = APISemanticVersionWrapper.Compare(versionA, versionB) != 0;
+            return result;
+        }
         #endregion
 
         public override string ToString()
