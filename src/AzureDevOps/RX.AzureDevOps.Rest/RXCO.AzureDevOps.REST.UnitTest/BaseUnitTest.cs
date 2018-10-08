@@ -12,10 +12,16 @@ namespace RXCO.AzureDevOps.REST.UnitTest
             APISemanticVersionWrapper versionA = new APISemanticVersionWrapper(1, 1);
             APISemanticVersionWrapper versionB = new APISemanticVersionWrapper(1, 1);
             Assert.AreEqual<APISemanticVersionWrapper>(versionA, versionB);
+            Assert.IsTrue(versionA == versionB);
+        }
+
+        [TestMethod]
+        public void APISemanticVersionWrapperCompareLessThan()
+        {
             // check for less than and greater than
-            versionA = new APISemanticVersionWrapper(1, 0);
-            versionB = new APISemanticVersionWrapper(1, 1);
-            Assert.AreEqual<APISemanticVersionWrapper>(versionA, versionB);
+            APISemanticVersionWrapper versionA = new APISemanticVersionWrapper(1, 0);
+            APISemanticVersionWrapper versionB = new APISemanticVersionWrapper(1, 1);
+            Assert.AreNotEqual<APISemanticVersionWrapper>(versionA, versionB);
             Assert.IsTrue(versionA < versionB);
             Assert.IsTrue(versionB > versionA);
         }

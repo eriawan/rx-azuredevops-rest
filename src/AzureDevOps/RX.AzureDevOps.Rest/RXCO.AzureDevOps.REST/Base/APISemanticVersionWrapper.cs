@@ -49,6 +49,20 @@ namespace RXCO.AzureDevOps.REST.Base
             result = APISemanticVersionWrapper.Compare(versionA, versionB) < 0;
             return result;
         }
+
+        public static bool operator ==(APISemanticVersionWrapper versionA, APISemanticVersionWrapper versionB)
+        {
+            var result = false;
+            result = String.Compare(versionA.ToString(), versionB.ToString(), StringComparison.InvariantCulture) == 0;
+            return result;
+        }
+
+        public static bool operator !=(APISemanticVersionWrapper versionA, APISemanticVersionWrapper versionB)
+        {
+            var result = false;
+            result = String.Compare(versionA.ToString(), versionB.ToString(), StringComparison.InvariantCulture) != 0;
+            return result;
+        }
         #endregion
 
         public override string ToString()
@@ -66,10 +80,13 @@ namespace RXCO.AzureDevOps.REST.Base
         public override bool Equals(object obj)
         {
             var semverIsEqual = false;
-            var checkSemVerType = obj as APISemanticVersionWrapper;
-            if (checkSemVerType != null)
+            if (obj is APISemanticVersionWrapper)
             {
-                semverIsEqual = (this.CompareTo(checkSemVerType) == 0);
+                semverIsEqual = (this.CompareTo((APISemanticVersionWrapper)obj) == 0);
+            }
+            else
+            {
+                throw new ArgumentException("obj has to be typed as APISemanticVersionWrapper");
             }
             return semverIsEqual;
         }
@@ -135,6 +152,16 @@ namespace RXCO.AzureDevOps.REST.Base
             var versionAComparer = (IComparer<APISemanticVersionWrapper>)this;
             comparisonResult = versionAComparer.Compare(this, other);
             return comparisonResult;
+        }
+
+        public override int GetHashCode()
+        {
+            var hashCode = 1356543658;
+            hashCode = hashCode * -1521134295 + VersionMajor.GetHashCode();
+            hashCode = hashCode * -1521134295 + VersionMinor.GetHashCode();
+            hashCode = hashCode * -1521134295 + VersionPatch.GetHashCode();
+            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(CustomVersionString);
+            return hashCode;
         }
 
         #endregion
