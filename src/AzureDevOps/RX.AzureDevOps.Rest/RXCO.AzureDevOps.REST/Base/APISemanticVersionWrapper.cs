@@ -53,14 +53,14 @@ namespace RXCO.AzureDevOps.REST.Base
         public static bool operator ==(APISemanticVersionWrapper versionA, APISemanticVersionWrapper versionB)
         {
             var result = false;
-            result = APISemanticVersionWrapper.Compare(versionA, versionB) == 0;
+            result = String.Compare(versionA.ToString(), versionB.ToString(), StringComparison.InvariantCulture) == 0;
             return result;
         }
 
         public static bool operator !=(APISemanticVersionWrapper versionA, APISemanticVersionWrapper versionB)
         {
             var result = false;
-            result = APISemanticVersionWrapper.Compare(versionA, versionB) != 0;
+            result = String.Compare(versionA.ToString(), versionB.ToString(), StringComparison.InvariantCulture) != 0;
             return result;
         }
         #endregion
@@ -80,10 +80,13 @@ namespace RXCO.AzureDevOps.REST.Base
         public override bool Equals(object obj)
         {
             var semverIsEqual = false;
-            var checkSemVerType = obj as APISemanticVersionWrapper;
-            if (checkSemVerType != null)
+            if (obj is APISemanticVersionWrapper)
             {
-                semverIsEqual = (this.CompareTo(checkSemVerType) == 0);
+                semverIsEqual = (this.CompareTo((APISemanticVersionWrapper)obj) == 0);
+            }
+            else
+            {
+                throw new ArgumentException("obj has to be typed as APISemanticVersionWrapper");
             }
             return semverIsEqual;
         }
@@ -113,37 +116,30 @@ namespace RXCO.AzureDevOps.REST.Base
         int IComparer<APISemanticVersionWrapper>.Compare(APISemanticVersionWrapper x, APISemanticVersionWrapper y)
         {
             int comparisonResult = 0;
-            if (y == null || x == null)
+            bool IsSameVersion = String.Compare(x.ToString(), y.ToString(), StringComparison.InvariantCulture) == 0;
+            if (IsSameVersion)
             {
-                comparisonResult = 1;
+                comparisonResult = 0;
             }
             else
             {
-                bool IsSameVersion = String.Compare(x.ToString(), y.ToString(), StringComparison.InvariantCulture) == 0;
-                if (IsSameVersion)
+                // check for less than
+                bool isLessThan = false;
+                isLessThan = (x.VersionMajor < y.VersionMajor) || ((x.VersionMajor == y.VersionMajor) && (x.VersionMinor < y.VersionMinor));
+                isLessThan = isLessThan || ((x.VersionMajor == y.VersionMajor) && (x.VersionMinor == y.VersionMinor) && (x.VersionPatch < y.VersionPatch));
+                if (isLessThan)
                 {
-                    comparisonResult = 0;
+                    comparisonResult = -1;
                 }
                 else
                 {
-                    // check for less than
-                    bool isLessThan = false;
-                    isLessThan = (x.VersionMajor < y.VersionMajor) || ((x.VersionMajor == y.VersionMajor) && (x.VersionMinor < y.VersionMinor));
-                    isLessThan = isLessThan || ((x.VersionMajor == y.VersionMajor) && (x.VersionMinor == y.VersionMinor) && (x.VersionPatch < y.VersionPatch));
-                    if (isLessThan)
+                    // check for greater than
+                    bool isGreaterThan = false;
+                    isGreaterThan = (x.VersionMajor > y.VersionMajor) || ((x.VersionMajor == y.VersionMajor) && (x.VersionMinor > y.VersionMinor));
+                    isGreaterThan = isGreaterThan || ((x.VersionMajor == y.VersionMajor) && (x.VersionMinor == y.VersionMinor) && (x.VersionPatch > y.VersionPatch));
+                    if (isGreaterThan)
                     {
-                        comparisonResult = -1;
-                    }
-                    else
-                    {
-                        // check for greater than
-                        bool isGreaterThan = false;
-                        isGreaterThan = (x.VersionMajor > y.VersionMajor) || ((x.VersionMajor == y.VersionMajor) && (x.VersionMinor > y.VersionMinor));
-                        isGreaterThan = isGreaterThan || ((x.VersionMajor == y.VersionMajor) && (x.VersionMinor == y.VersionMinor) && (x.VersionPatch > y.VersionPatch));
-                        if (isGreaterThan)
-                        {
-                            comparisonResult = 1;
-                        }
+                        comparisonResult = 1;
                     }
                 }
             }
@@ -156,6 +152,16 @@ namespace RXCO.AzureDevOps.REST.Base
             var versionAComparer = (IComparer<APISemanticVersionWrapper>)this;
             comparisonResult = versionAComparer.Compare(this, other);
             return comparisonResult;
+        }
+
+        public override int GetHashCode()
+        {
+            var hashCode = 1356543658;
+            hashCode = hashCode * -1521134295 + VersionMajor.GetHashCode();
+            hashCode = hashCode * -1521134295 + VersionMinor.GetHashCode();
+            hashCode = hashCode * -1521134295 + VersionPatch.GetHashCode();
+            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(CustomVersionString);
+            return hashCode;
         }
 
         #endregion
