@@ -113,30 +113,37 @@ namespace RXCO.AzureDevOps.REST.Base
         int IComparer<APISemanticVersionWrapper>.Compare(APISemanticVersionWrapper x, APISemanticVersionWrapper y)
         {
             int comparisonResult = 0;
-            bool IsSameVersion = String.Compare(x.ToString(), y.ToString(), StringComparison.InvariantCulture) == 0;
-            if (IsSameVersion)
+            if (y == null || x == null)
             {
-                comparisonResult = 0;
+                comparisonResult = 1;
             }
             else
             {
-                // check for less than
-                bool isLessThan = false;
-                isLessThan = (x.VersionMajor < y.VersionMajor) || ((x.VersionMajor == y.VersionMajor) && (x.VersionMinor < y.VersionMinor));
-                isLessThan = isLessThan || ((x.VersionMajor == y.VersionMajor) && (x.VersionMinor == y.VersionMinor) && (x.VersionPatch < y.VersionPatch));
-                if (isLessThan)
+                bool IsSameVersion = String.Compare(x.ToString(), y.ToString(), StringComparison.InvariantCulture) == 0;
+                if (IsSameVersion)
                 {
-                    comparisonResult = -1;
+                    comparisonResult = 0;
                 }
                 else
                 {
-                    // check for greater than
-                    bool isGreaterThan = false;
-                    isGreaterThan = (x.VersionMajor > y.VersionMajor) || ((x.VersionMajor == y.VersionMajor) && (x.VersionMinor > y.VersionMinor));
-                    isGreaterThan = isGreaterThan || ((x.VersionMajor == y.VersionMajor) && (x.VersionMinor == y.VersionMinor) && (x.VersionPatch > y.VersionPatch));
-                    if (isGreaterThan)
+                    // check for less than
+                    bool isLessThan = false;
+                    isLessThan = (x.VersionMajor < y.VersionMajor) || ((x.VersionMajor == y.VersionMajor) && (x.VersionMinor < y.VersionMinor));
+                    isLessThan = isLessThan || ((x.VersionMajor == y.VersionMajor) && (x.VersionMinor == y.VersionMinor) && (x.VersionPatch < y.VersionPatch));
+                    if (isLessThan)
                     {
-                        comparisonResult = 1;
+                        comparisonResult = -1;
+                    }
+                    else
+                    {
+                        // check for greater than
+                        bool isGreaterThan = false;
+                        isGreaterThan = (x.VersionMajor > y.VersionMajor) || ((x.VersionMajor == y.VersionMajor) && (x.VersionMinor > y.VersionMinor));
+                        isGreaterThan = isGreaterThan || ((x.VersionMajor == y.VersionMajor) && (x.VersionMinor == y.VersionMinor) && (x.VersionPatch > y.VersionPatch));
+                        if (isGreaterThan)
+                        {
+                            comparisonResult = 1;
+                        }
                     }
                 }
             }
