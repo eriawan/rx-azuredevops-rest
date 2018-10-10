@@ -1,0 +1,22 @@
+# Build ASP.NET Core project using Azure Pipelines
+# https://docs.microsoft.com/azure/devops/pipelines/languages/dotnet-core?view=vsts
+
+pool:
+  vmImage: 'Ubuntu-16.04'
+  
+variables:
+  buildConfiguration: 'Debug'
+
+steps:
+- script: |
+    dotnet restore src\AzureDevOps\RX.AzureDevOps.Rest\RX.AzureDevOps.Rest.sln
+    dotnet build src\AzureDevOps\RX.AzureDevOps.Rest\RX.AzureDevOps.Rest.sln --configuration $(buildConfiguration)
+    dotnet test src\AzureDevOps\RX.AzureDevOps.Rest\RXCO.AzureDevOps.REST.UnitTest --configuration $(buildConfiguration) --logger trx
+    dotnet publish src\AzureDevOps\RX.AzureDevOps.Rest\RX.AzureDevOps.Rest.sln --configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)
+    
+- task: PublishTestResults@2
+  inputs:
+    testRunner: VSTest
+    testResultsFiles: '**/*.trx'
+
+- task: PublishBuildArtifacts@1
